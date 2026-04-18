@@ -6,12 +6,10 @@ public class Main {
     private static final int P2MANCALA = 13;
     private static final int P1FIRSTPOCKET = 0;
     private static final int P1LASTPOCKET = 5;
-    private static final int  P2FIRSTPOCKET = 7;
+    private static final int P2FIRSTPOCKET = 7;
     private static final int P2LASTPOCKET = 12;
 
     private static int[] _gameBoard = new int[BOARD_SIZE];
-    private static int _p1Mancala = _gameBoard[P1MANCALA];
-    private static int _p2Mancala = _gameBoard[P2MANCALA];
 
 
     public static void main(String[] args) {

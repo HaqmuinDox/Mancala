@@ -18,40 +18,43 @@ public class Main {
         // p1Pockets = _gameBoard[1] to _gameBoard[6]
         // p2Pockets = _gameBoard[8] to _gameBoard[13]
 
-        startNewGame();
+        for(int i = 0; i < 1000; i++) {
+            playGame(150);
+        }
 
-        printGameMap();
+        //printGameMap();
         //printGameState();
+        //System.out.println("More moves reqd");
 
+    }
 
-        for (int i = 0; i < 101; i ++) {
+    private static void playGame(int j) {
+        startNewGame();
+        for (int i = 1; i <= j; i ++) {
             if (p1PlaysATurn() + p2PlaysATurn() == 2) {
-                System.out.println("Game Over in " + i + " moves");
+                System.out.print("Game Over in " + i + " moves. ");
+                if (_gameBoard[P1MANCALA] > _gameBoard[P2MANCALA]) {
+                    System.out.println("P1 won with " + _gameBoard[P1MANCALA] + ":" + _gameBoard[P2MANCALA]);
+                } else if (_gameBoard[P1MANCALA] < _gameBoard[P2MANCALA]) {
+                    System.out.println("P2 won with " + _gameBoard[P1MANCALA] + ":" + _gameBoard[P2MANCALA]);
+                } else {
+                    System.out.println("Draw");
+                }
                 break;
             }
 
         }
-        //System.out.println("More moves reqd");
-
-
-
-
-
-
-
-
-
-
     }
 
     private static int p1PlaysATurn() {
-        System.out.println("P1's Turn");
+        //System.out.println("P1's Turn");
         int sum = 0;
         for(int i = P1FIRSTPOCKET; i <=P1LASTPOCKET; i++) {
             sum = sum + _gameBoard[i];
         }
         if (sum == 0) {
-            System.out.println("No possible moves");
+            //System.out.println("No possible moves");
+            //System.out.println();
             return 1;
         }
 
@@ -60,24 +63,25 @@ public class Main {
         while(_gameBoard[pocket] == 0) {
             pocket = getRandomNumberUsingNextInt(P1FIRSTPOCKET, P1LASTPOCKET+1);
         }
-        System.out.println("P1 chose: " + pocket);
+        //System.out.println("P1 chose: " + pocket);
         int hand = _gameBoard[pocket];
         _gameBoard[pocket] = 0;
 
         distributeStones(pocket, hand, "P1");
-        System.out.println();
+        //System.out.println();
 
         return 0;
     }
 
     private static int p2PlaysATurn() {
-        System.out.println("P2's Turn");
+        //System.out.println("P2's Turn");
         int sum = 0;
         for(int i = P2FIRSTPOCKET; i <=P2LASTPOCKET; i++) {
             sum = sum + _gameBoard[i];
         }
         if (sum == 0) {
-            System.out.println("No possible moves");
+            //System.out.println("No possible moves");
+            //System.out.println();
             return 1;
         }
 
@@ -86,12 +90,12 @@ public class Main {
         while(_gameBoard[pocket] == 0) {
             pocket = getRandomNumberUsingNextInt(P2FIRSTPOCKET, P2LASTPOCKET+1);
         }
-        System.out.println("P2 chose: " + pocket);
+        //System.out.println("P2 chose: " + pocket);
         int hand = _gameBoard[pocket];
         _gameBoard[pocket] = 0;
 
         distributeStones(pocket, hand, "P2");
-        System.out.println();
+        //System.out.println();
 
         return 0;
 
@@ -100,32 +104,53 @@ public class Main {
     private static void distributeStones(int pocket, int hand, String player) {
 
         if (player.equals("P1")) {
-            int carry = (pocket+hand)/BOARD_SIZE;
+            int carry = (hand)/BOARD_SIZE;
             int lastPocket = pocket + hand + carry;
             for(int i = pocket + 1; i <= lastPocket; i++) {
                 if(i != P2MANCALA) {
                     _gameBoard[i%BOARD_SIZE]++;
                 }
             }
-            printGameState();
             if (lastPocket % BOARD_SIZE == P1MANCALA) {
+                //printGameState();
                 p1PlaysATurn();
+            } else if (_gameBoard[lastPocket % BOARD_SIZE] == 1) {
+                endedOnEmptySpace(lastPocket % BOARD_SIZE);
             }
+            //printGameState();
+
 
         } else {
-            int carry = (pocket+hand)/BOARD_SIZE ;
-            int lastPocket = pocket + hand + carry - 1;
+            int carry = (hand)/BOARD_SIZE ;
+            int lastPocket = pocket + hand + carry;
             for(int i = pocket + 1; i <= lastPocket; i++) {
                 if(i != P1MANCALA) {
                     _gameBoard[i%BOARD_SIZE]++;
                 }
             }
-            printGameState();
             if (lastPocket % BOARD_SIZE == P2MANCALA) {
                 p2PlaysATurn();
+            } else if (_gameBoard[lastPocket % BOARD_SIZE] == 1) {
+                endedOnEmptySpace(lastPocket % BOARD_SIZE);
             }
+            //printGameState();
         }
 
+    }
+
+    private static void endedOnEmptySpace(int pocket) {
+        if (pocket< P1LASTPOCKET && pocket > P1FIRSTPOCKET) {
+            int t = _gameBoard[pocket] + _gameBoard[12 - pocket];
+            _gameBoard[pocket] = 0;
+            _gameBoard[12 - pocket] = 0;
+            _gameBoard[P1MANCALA] += t;
+        } else {
+            int mirror = (pocket - 12)*(-1);
+            int t = _gameBoard[pocket] + _gameBoard[mirror];
+            _gameBoard[pocket] = 0;
+            _gameBoard[mirror] = 0;
+            _gameBoard[P2MANCALA] += t;
+        }
     }
 
     private static void startNewGame() {
@@ -146,7 +171,7 @@ public class Main {
     }
 
     public static void printGameState() {
-        System.out.printf("P2: [   [");
+        System.out.print("P2: [   [");
         for (int i = P2LASTPOCKET; i >= P2FIRSTPOCKET; i--) {
             if (i != P2FIRSTPOCKET) {
                 if (_gameBoard[i] < 10) {
@@ -164,7 +189,7 @@ public class Main {
             }
         }
         System.out.println("    [ " + _gameBoard[P2MANCALA] + "                          " + _gameBoard[P1MANCALA] + " ]");
-        System.out.printf("P1: [   [");
+        System.out.print("P1: [   [");
         for (int i = P1FIRSTPOCKET; i <= P1LASTPOCKET; i++) {
             if (i != P1LASTPOCKET) {
                 if (_gameBoard[i] < 10) {
@@ -184,7 +209,7 @@ public class Main {
     }
 
     public static void printGameMap() {
-        System.out.printf("P2: [   [");
+        System.out.print("P2: [   [");
         for (int i = P2LASTPOCKET; i >= P2FIRSTPOCKET; i--) {
             if (i != P2FIRSTPOCKET) {
                 if (i < 10) {
@@ -202,7 +227,7 @@ public class Main {
             }
         }
         System.out.println("    [ " + P2MANCALA + "                         " + P1MANCALA + " ]");
-        System.out.printf("P1: [   [");
+        System.out.print("P1: [   [");
         for (int i = P1FIRSTPOCKET; i <= P1LASTPOCKET; i++) {
             if (i != P1LASTPOCKET) {
                 if (i < 10) {
